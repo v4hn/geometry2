@@ -42,6 +42,8 @@ class Buffer(tf2.BufferCore, tf2_ros.BufferInterface):
             tf2.BufferCore.__init__(self)
         tf2_ros.BufferInterface.__init__(self)
 
+		self.simulated_time = rospy.get_param('use_sim_time', False)
+
         if debug:
             #Check to see if the service has already been advertised in this node
             try:
@@ -71,7 +73,7 @@ class Buffer(tf2.BufferCore, tf2_ros.BufferInterface):
             r= rospy.Rate(20)
             while (rospy.Time.now() < start_time + timeout and 
                    not self.can_transform_core(target_frame, source_frame, time)[0] and
-                   rospy.Time.now() >= start_time):
+                   (!self.simulated_time || rospy.Time.now() >= start_time)):
                 r.sleep()
         core_result = self.can_transform_core(target_frame, source_frame, time)
         if return_debug_tuple:
@@ -86,7 +88,7 @@ class Buffer(tf2.BufferCore, tf2_ros.BufferInterface):
             r= rospy.Rate(20)
             while (rospy.Time.now() < start_time + timeout and 
                    not self.can_transform_full_core(target_frame, target_time, source_frame, source_time, fixed_frame)[0] and
-                   rospy.Time.now() >= start_time):
+                   (!self.simulated_time || rospy.Time.now() >= start_time)):
                 r.sleep()
         core_result = self.can_transform_full_core(target_frame, target_time, source_frame, source_time, fixed_frame)
         if return_debug_tuple:

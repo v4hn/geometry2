@@ -128,6 +128,7 @@ namespace tf2_ros
 
     ros::ServiceServer frames_server_;
 
+    bool simulated_time_;
 
   }; // class 
 
